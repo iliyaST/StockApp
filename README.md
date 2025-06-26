@@ -1,15 +1,10 @@
-# Material UI - Vite example in TypeScript
+# Stock App (Vite, Typescript, MUI)
 
 ## How to use
 
-Download the example [or clone the repo](https://github.com/mui/material-ui):
+Download the example [or clone the repo](https://github.com/iliyaST/StockApp.git):
 
 <!-- #target-branch-reference -->
-
-```bash
-curl https://codeload.github.com/mui/material-ui/tar.gz/master | tar -xz --strip=2 material-ui-master/examples/material-ui-vite-ts
-cd material-ui-vite-ts
-```
 
 Install it and run:
 
