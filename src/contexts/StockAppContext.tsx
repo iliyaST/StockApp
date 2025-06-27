@@ -77,54 +77,58 @@ export const StockAppProvider = ({ children }: { children: ReactNode }) => {
 
         let totalPercentageLeft = 100 - newTotalPercentageOfSelectedStocks;
         const itemsToUpdate = selectedStocks.filter(
-            (stock) => stock.name !== stockName
+            (stock) => stock.name !== stockName && !stock.isLocked
         );
 
-        if (totalPercentageLeft < 0) {
-            let index = 0;
+        if (itemsToUpdate.length > 0) {
+            if (totalPercentageLeft < 0) {
+                let index = 0;
 
-            while (totalPercentageLeft !== 0) {
-                if (index >= itemsToUpdate.length) {
-                    index = 0;
-                }
+                while (totalPercentageLeft !== 0) {
+                    if (index >= itemsToUpdate.length) {
+                        index = 0;
+                    }
 
-                if (
-                    itemsToUpdate[index].percentage - 1 < 0 ||
-                    itemsToUpdate[index].isLocked
-                ) {
+                    if (itemsToUpdate[index].percentage - 1 < 0) {
+                        index += 1;
+                        continue;
+                    }
+
+                    itemsToUpdate[index].percentage -= 1;
+
+                    totalPercentageLeft += 1;
                     index += 1;
-                    continue;
                 }
+            } else {
+                let index = 0;
+                while (totalPercentageLeft !== 0) {
+                    if (index >= itemsToUpdate.length) {
+                        index = 0;
+                    }
 
-                itemsToUpdate[index].percentage -= 1;
+                    if (itemsToUpdate[index].percentage + 1 > 100) {
+                        index += 1;
+                        continue;
+                    }
 
-                totalPercentageLeft += 1;
-                index += 1;
-            }
-        } else {
-            let index = 0;
-            while (totalPercentageLeft !== 0) {
-                if (index >= itemsToUpdate.length) {
-                    index = 0;
-                }
+                    itemsToUpdate[index].percentage += 1;
 
-                if (
-                    itemsToUpdate[index].percentage + 1 > 100 ||
-                    itemsToUpdate[index].isLocked
-                ) {
+                    totalPercentageLeft -= 1;
                     index += 1;
-                    continue;
                 }
-
-                itemsToUpdate[index].percentage += 1;
-
-                totalPercentageLeft -= 1;
-                index += 1;
             }
         }
 
+        const lockedStocks =
+            operation === "remove"
+                ? selectedStocks.filter(
+                      (stock) => stock.isLocked && stock.name !== stockName
+                  )
+                : selectedStocks.filter((stock) => stock.isLocked);
+
         const updatedStocks = [
             ...itemsToUpdate,
+            ...lockedStocks,
             ...(operation !== "remove"
                 ? [{ name: stockName, percentage: newPercentage }]
                 : []),
